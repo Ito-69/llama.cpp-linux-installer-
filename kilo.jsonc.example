@@ -1,0 +1,71 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "model": "qwen2.5-14b",
+  "permission": {
+    "bash": "ask"
+  },
+  "disabled_providers": [],
+  "provider": {
+    "llama_local": {
+      "name": "Local llama.cpp",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://localhost:8080/v1"
+      },
+      "models": {
+        "DeepSeek-R1-Distill-Qwen-32B-Uncensored.Q5_K_M": {
+          "name": "DeepSeek-R1-Distill-Qwen-32B-Uncensored.Q5_K_M"
+        },
+        "gemma-4-31B-it-abliterated.Q5_K_M": {
+          "name": "gemma-4-31B-it-abliterated.Q5_K_M"
+        },
+        "gemma-4-31b-vision": {
+          "name": "gemma-4-31b-vision",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        },
+        "llama-3.1-8b-q4_k_m": {
+          "name": "llama-3.1-8b-q4_k_m"
+        },
+        "medgemma-1.5-4b-vision": {
+          "name": "medgemma-1.5-4b-vision",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        },
+        "Meta-Llama-3.1-8B-Instruct": {
+          "name": "Meta-Llama-3.1-8B-Instruct"
+        },
+        "Qwen3.6-35B-A3B-UD-Q5_K_M": {
+          "name": "qwen3.6-vision:35b",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        },
+        "Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Q5_K_P": {
+          "name": "Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Q5_K_P",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        },
+        "Qwopus3.6-35B-A3B-v1-Q5_K_M": {
+          "name": "Qwopus3.6-35B-A3B-v1-Q5_K_M",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        }
+      }
+    }
+  }
+}
