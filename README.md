@@ -248,6 +248,32 @@ rm -rf ~/models/*.gguf
 - `huggingface-cli` for model downloads (`pip install huggingface_hub`)
 - `systemd` (for `--install-service`, requires root)
 
+## Ollama API Bridge
+
+`llama-ollama-bridge.py` is a lightweight proxy that lets IDE extensions (Cursor, Copilot, Continue) talk to `llama-server` via the Ollama protocol.
+
+```bash
+# Run it (default port 11434, requires llama-server on port 8080)
+python3 llama-ollama-bridge.py
+
+# With systemd (auto-start at boot)
+sudo cp llama-ollama-bridge.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now llama-ollama-bridge.service
+```
+
+### Model name mapping
+
+llama.cpp model IDs are long filenames like `Qwen2.5-14B-Instruct-Q4_K_M.gguf`. The bridge can map them to clean Ollama names:
+
+```bash
+mkdir -p ~/.config/llama-ollama-bridge
+cp llama-ollama-bridge.models.example.json ~/.config/llama-ollama-bridge/models.json
+# Edit ~/.config/llama-ollama-bridge/models.json to match your models
+```
+
+The file is a flat JSON dict: `{"ollama-name": "llama.cpp-model-id"}`. Without a mapping file, model IDs are passed through as-is (lowercased, dots replaced with hyphens).
+
 ## License
 
 MIT — feel free to use, modify, and share.

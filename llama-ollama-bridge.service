@@ -1,0 +1,15 @@
+[Unit]
+Description=llama-ollama-bridge — Ollama API proxy for llama.cpp
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=%i
+ExecStart=/usr/local/bin/llama-ollama-bridge.py 11434
+Restart=always
+RestartSec=5
+Environment=LLAMA_URL=http://127.0.0.1:8080
+
+[Install]
+WantedBy=multi-user.target

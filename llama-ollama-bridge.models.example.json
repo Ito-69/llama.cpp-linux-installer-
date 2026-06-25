@@ -1,0 +1,7 @@
+{
+  "llama3.1:8b":      "Meta-Llama-3.1-8B-Instruct",
+  "qwen2.5:14b":      "Qwen2.5-14B-Instruct-Q4_K_M",
+  "qwen2.5:7b":       "Qwen2.5-7B-Instruct-Q4_K_M",
+  "qwen2.5:32b":      "Qwen2.5-32B-Instruct-Q4_K_M",
+  "deepseek-r1:32b":  "DeepSeek-R1-Distill-Qwen-32B-Uncensored.Q5_K_M"
+}
