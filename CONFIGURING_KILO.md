@@ -7,6 +7,7 @@ This guide explains how to configure [Kilo](https://kilo.ai) (and other OpenAI-c
 - `llama-server` installed and running (see [`install-llama.sh`](./install-llama.sh))
 - A GGUF model downloaded (or use `--install-service` to keep it running in the background)
 - Kilo installed with a config file (`~/.config/kilo/kilo.jsonc` or project-local `kilo.jsonc`)
+- `ffmpeg` — required by `llama-server` for image processing in vision models (`sudo apt install ffmpeg`)
 
 ## Basic Setup
 
