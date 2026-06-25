@@ -30,22 +30,30 @@ curl http://127.0.0.1:8080/health
 
 ### 2. Configure Kilo
 
-Add an OpenAI-compatible provider in `kilo.jsonc`:
+Add an OpenAI-compatible provider in `kilo.jsonc` using the `@ai-sdk/openai-compatible` adapter:
 
 ```jsonc
 {
-  "providers": [
-    {
-      "name": "llama-local",
-      "model": "qwen2.5-14b",
-      "baseUrl": "http://127.0.0.1:8080/v1",
-      "apiKey": "noop"
+  "provider": {
+    "llama_local": {
+      "name": "Local llama.cpp",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://localhost:8080/v1"
+      },
+      "models": {
+        "qwen2.5-14b": {
+          "name": "Qwen2.5 14B"
+        }
+      }
     }
-  ]
+  }
 }
 ```
 
-For **router mode** (multiple models, see below), the model field in Kilo should match the model name used in `models.ini`.
+Each entry under `models` is a key-value pair where the key is the model ID that `llama-server` reports (from `GET /v1/models`) and the value contains the display name. For text-only models, no additional fields are needed — a plain `name` is sufficient.
+
+An example config with all common models is available at [`kilo.jsonc.example`](./kilo.jsonc.example).
 
 ## Router Mode (Multiple Models)
 
@@ -89,24 +97,27 @@ llama-server \
 
 ```jsonc
 {
-  "providers": [
-    {
-      "name": "llama-fast",
-      "model": "llama3.1-8b",
-      "baseUrl": "http://127.0.0.1:8080/v1",
-      "apiKey": "noop"
-    },
-    {
-      "name": "llama-smart",
-      "model": "qwen2.5-14b",
-      "baseUrl": "http://127.0.0.1:8080/v1",
-      "apiKey": "noop"
+  "provider": {
+    "llama_local": {
+      "name": "Local llama.cpp",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://localhost:8080/v1"
+      },
+      "models": {
+        "llama3.1-8b": {
+          "name": "Llama 3.1 8B"
+        },
+        "qwen2.5-14b": {
+          "name": "Qwen2.5 14B"
+        }
+      }
     }
-  ]
+  }
 }
 ```
 
-The model name in `kilo.jsonc` must match the section name in `models.ini`. When Kilo sends a request with `model: "llama3.1-8b"`, the router loads and serves that model.
+The model key (e.g. `llama3.1-8b`) must match the section name in `models.ini`. When Kilo sends a request with `model: "llama3.1-8b"`, the router loads and serves that model.
 
 ### Systemd service with router mode
 
@@ -156,18 +167,33 @@ mmproj = /home/ito/models/gemma-4-31b-vision/ggml-model-mmproj-q4_0.gguf
 
 ### Kilo provider for vision
 
+Vision models in Kilo require **two** extra fields: `"attachment": true` and a `modalities` block. Without `modalities`, Kilo's client-side check (`capabilities.input.image`) stays `false` and blocks image attachments — this is a known issue (Kilo Code issue [#10102](https://github.com/nicepkg/kilo-code/issues/10102)).
+
 ```jsonc
 {
-  "providers": [
-    {
-      "name": "gemma-vision",
-      "model": "gemma4-vision",
-      "baseUrl": "http://127.0.0.1:8080/v1",
-      "apiKey": "noop"
+  "provider": {
+    "llama_local": {
+      "name": "Local llama.cpp",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://localhost:8080/v1"
+      },
+      "models": {
+        "gemma4-vision": {
+          "name": "Gemma 4 Vision",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        }
+      }
     }
-  ]
+  }
 }
 ```
+
+> **Note:** `"attachment": true` alone is NOT sufficient — the `modalities` block is mandatory. Both must be present for vision to work.
 
 ### Testing vision
 
@@ -282,6 +308,7 @@ The model is automatically split across all visible GPUs. Use `CUDA_VISIBLE_DEVI
 - Ensure `mmproj` is set correctly in `models.ini`
 - The vision model must support the OpenAI vision format (`content` as an array with `type: "image_url"`)
 - Check that `mmproj` files are downloaded (they are separate from the main GGUF)
+- **In Kilo Code:** verify the model entry in `kilo.jsonc` has **both** `"attachment": true` and the full `modalities` block. Without `modalities`, `capabilities.input.image` stays `false` and Kilo blocks images at the client level (see issue [#10102](https://github.com/nicepkg/kilo-code/issues/10102)). See [`kilo.jsonc.example`](./kilo.jsonc.example) for the correct format.
 
 ### Port already in use
 
